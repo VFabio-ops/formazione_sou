@@ -1,7 +1,7 @@
 Benvenuti nella repository DevOps della #6 edizione Academy Sourcesense S.p.A.
 # 📚 formazione_sou
 
-Repository dedicata alla formazione SOU (System & Operations Unit), contenente esercitazioni pratiche e script Bash commentati su temi fondamentali di amministrazione di sistema Linux, sicurezza e gestione dei permessi.
+Repository dedicata alla formazione, contenente esercitazioni pratiche e script Bash commentati su temi fondamentali di amministrazione di sistema Linux, sicurezza e gestione dei permessi.
 
 ---
 
