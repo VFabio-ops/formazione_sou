@@ -15,8 +15,8 @@ formazione_sou/
 │   ├── ssh_key_exchange/   # Scambio chiavi SSH
 │   └── sudo_impersonation/ # Impersonificazione sudo nel file sudoers
 │
-└── script_bash/            # Script Bash da analizzare e commentare
-    └── *.sh
+└── Script_Sourcesense/            # Script Bash da analizzare e commentare
+
 ```
 
 ---
