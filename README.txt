@@ -1,4 +1,4 @@
-# 📚 formazione_sou
+# formazione_sou
 
 Repository dedicata alla formazione, contenente esercitazioni pratiche e script Bash commentati su temi fondamentali di amministrazione di sistema Linux, sicurezza e gestione dei permessi.
 
@@ -20,9 +20,9 @@ formazione_sou/
 
 ---
 
-## 🧪 Esercitazioni
+## Esercitazioni
 
-### 1. 🔐 Certificazione SSL
+### 1. Certificazione SSL
 
 Questa esercitazione guida alla creazione e gestione di certificati SSL/TLS, fondamentali per garantire comunicazioni sicure e cifrate tra client e server.
 
@@ -49,7 +49,7 @@ openssl x509 -in server.crt -text -noout
 
 ---
 
-### 2. ⚔️ Gestione di un Conflitto Git
+### 2. Gestione di un Conflitto Git
 
 Questa esercitazione simula e risolve un conflitto Git, una delle situazioni più comuni nel lavoro collaborativo su repository condivise.
 
@@ -83,7 +83,7 @@ git commit -m "Risolto conflitto tra branch-A e branch-B"
 
 ---
 
-### 3. 🔑 Scambio Chiave SSH
+### 3. Scambio Chiave SSH
 
 Questa esercitazione copre la configurazione dell'autenticazione basata su chiavi SSH, metodo più sicuro rispetto all'autenticazione tramite password.
 
@@ -115,7 +115,7 @@ ssh -i ~/.ssh/id_ed25519 utente@indirizzo_server
 
 ---
 
-### 4. 🛡️ Impersonificazione Sudo nel File sudoers
+### 4. Impersonificazione Sudo nel File sudoers
 
 Questa esercitazione esplora la gestione avanzata dei privilegi con `sudo`, con particolare attenzione alla configurazione del file `/etc/sudoers` per permettere a un utente di eseguire comandi come se fosse un altro utente (non necessariamente root).
 
@@ -141,7 +141,7 @@ alice   ALL=(bob)   NOPASSWD: /bin/ls
 sudo -u bob /bin/ls /home/bob
 ```
 
-> ⚠️ **Attenzione:** Modificare il file `/etc/sudoers` richiede estrema cautela. Usare **sempre** `visudo` per evitare errori di sintassi che potrebbero rendere il sistema inaccessibile.
+> **Attenzione:** Modificare il file `/etc/sudoers` richiede estrema cautela. Usare **sempre** `visudo` per evitare errori di sintassi che potrebbero rendere il sistema inaccessibile.
 
 ```bash
 # Apertura sicura del file sudoers
@@ -150,7 +150,7 @@ sudo visudo
 
 ---
 
-### 5. 🔍 Port Scanner con Netcat
+### 5. Port Scanner con Netcat
 
 Questa esercitazione consiste in uno script Bash che implementa un semplice ma funzionale **port scanner**, utilizzando `netcat` (`nc`) per verificare quali porte TCP sono aperte su un host remoto in un intervallo definito dall'utente.
 
@@ -193,11 +193,11 @@ nc -w 1 $HOST_IP $port <<< ""
 # se il comando ha successo (exit code 0), la porta è aperta
 ```
 
-> ⚠️ **Nota:** Effettuare scansioni di porte su host senza autorizzazione può essere illegale. Utilizzare questo script **esclusivamente** su reti e sistemi di propria proprietà o per cui si dispone di esplicita autorizzazione.
+> **Nota:** Effettuare scansioni di porte su host senza autorizzazione può essere illegale. Utilizzare questo script **esclusivamente** su reti e sistemi di propria proprietà o per cui si dispone di esplicita autorizzazione.
 
 ---
 
-## 🐚 Script Bash
+## Script Bash
 
 La cartella `script_bash/` contiene script Bash da analizzare, studiare e commentare. L'obiettivo è comprendere la logica dei singoli script, documentare ogni sezione con commenti esplicativi e — dove necessario — migliorarne la leggibilità o la robustezza.
 
@@ -233,7 +233,7 @@ Per eseguire le esercitazioni è consigliato un ambiente **Linux** (Ubuntu/Debia
 
 ---
 
-## 🚀 Come usare questa repository
+## Come usare questa repository
 
 ```bash
 # 1. Clona la repository
@@ -249,7 +249,7 @@ cd esercizi/ssl_certificate
 
 ---
 
-## 📌 Note
+## Note
 
 - Gli esercizi sono pensati per un contesto di **laboratorio/formazione**: non usare configurazioni self-signed o permessi sudo permissivi in ambienti di produzione.
 - Prima di modificare file di sistema critici come `sudoers` o `sshd_config`, effettua sempre un **backup**.
@@ -257,7 +257,7 @@ cd esercizi/ssl_certificate
 
 ---
 
-## 👤 Autore
+## Autore
 
 **VFabio-ops**  
 Repository creata nell'ambito del percorso formativo SOU.
