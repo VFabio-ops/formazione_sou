@@ -1,0 +1,23 @@
+# if [ "$UID" -eq "$ROOT_UID" ] = la presena dell'if ci fa capire che si tratta 
+# di un blocco condizionale, ovvero che per eseguire un comando bisogna eguagliare 
+# il valore della variabile che in questo caso è "$ROOT_UID", altrimenti entra in gioco
+# "else" che ci permette di eseguire un comando diverso.
+
+# In questo caso, se l'utente è root, allora viene stampato a video "You are root", altrimenti
+# viene stampato "You are just an ordinary user (but mom loves you just the same)."
+# Questo accade grazie al comando "echo" che serve a stampare un messaggio.
+
+# fi serve a chiudere il blocco condizionale iniziato con "if".
+
+# exit 0 permette di chiudere lo script con un codice di uscita 0, ovvero che lo script è stato
+# eseguito con successo.
+
+# ================================================================================================ #
+
+# nel secondo caso notiamo che nella seconda variabile c'è un comando, ovvero "id -nu"
+# Il comando "id" permette di stampare le informazioni sull'utente.
+# con la flag -u stampa l'ID numerico dell'utente.
+# invece la flag -n stampa il nome invece dell'ID numerico 
+
+# Per il blocco condizionale invece possiamo vedere che è simile al primo,
+# solo che invece di confrontare l'ID numerico, confronta il nome utente.
