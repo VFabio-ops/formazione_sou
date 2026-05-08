@@ -1,0 +1,37 @@
+# il primo "echo" vuoto serve per creare uno spazio letteralmente stampandolo
+# il secondo "echo" invece serve per stampare il nome dello script (stesso comando eseguito da linea
+# di comando stampa il nome della shell in utilizzo).
+
+# il terzo "echo" ha lo stesso risultato solo che utilizza basename, che permette di estrarre
+# solo il nome del file senza il percorso completo.
+
+# un altro "echo" vuoto per creare un altro spazio.
+
+# troviamo un blocco condizionale che controlla che la stringa non sia vuota con l'operatore -n
+# paragonandola alla variabile $1 che in bash rappresenta il primo parametro passato allo script. 
+# nel caso coincida, allora viene stampato il messaggio "Paramater #1 is $1"
+# chiusura del blocco condizionale con fi.
+
+# il secondo blocco condizionale ha la stessa funzione, solo che il controllo viene fatto con il 
+# secondo parametro rappresentato da $2.
+# stampando in caso di coincidenza "Parameter #2 is $2"
+
+# arriviamo al terzo blocco condizionale, stesso concetto, parametro diverso.
+# in questo caso è il terzo parametro invece che il primo o il secondo.
+# anche qui stampando "Parameter #3 is $3" in caso di coincidenza.
+
+# c'è poi il quinto blocco condizionale che invece controlla il 10° parametro
+# che viene indicato con ${10} poiché tutti i numeri > di 9 devono essere indicati 
+# con le parentesi graffe.
+
+# anche qui stampa "Parameter #10 is ${10}" nel caso la condizione sia vera.
+
+# poi troviamo un "echo" vuoto per creare un altro spazio.
+# Un altro "echo" che stampa "All the command-line parameters are: $*"
+
+# l'ultimo blocco condizionale invece controlla, grazie a $#, se il numero di parametri 
+# passati allo script è less than (-lt) di "$MINPARAMS" 
+# (che è la variabile definita all'inizio dello script con valore 10)
+# allora stampa uno spazio 
+# poi stampa "This script need at least $MINPARAMS command-line arguments!"
+# e chiude il blocco, un altro spazio, e si chiude con l'Exit 0
