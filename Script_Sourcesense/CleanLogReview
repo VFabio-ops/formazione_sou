@@ -1,0 +1,4 @@
+Il comando "cd" permette di cambiare directory.
+Il comando "cat" stampa l'output di qualsiasi file.
+L'operatore ">" reindirizza lo STDOUT di un comando a un file.
+Il comando "echo" stampa una stringa di testo.
