@@ -1,0 +1,33 @@
+HTTP/1.1 200 OK
+Date: Tue, 12 May 2026 15:12:05 GMT
+Server: Apache/2.4.64 (Ubuntu)
+Last-Modified: Tue, 21 Apr 2026 07:38:52 GMT
+ETag: "f9-64ff381bb3cd7"
+Accept-Ranges: bytes
+Content-Length: 249
+Vary: Accept-Encoding
+Content-Type: text/html
+
+HTTP/1.1 301 Moved Permanently
+Date: Tue, 12 May 2026 15:12:26 GMT
+Server: Apache/2.4.64 (Ubuntu)
+Location: https://www.google.com
+Content-Type: text/html; charset=iso-8859-1
+
+HTTP/1.1 401 Unauthorized
+Date: Wed, 13 May 2026 08:03:35 GMT
+Server: Apache/2.4.64 (Ubuntu)
+WWW-Authenticate: Basic realm="admin area"
+Content-Type: text/html; charset=iso-8859-1
+
+HTTP/1.1 404 Not Found
+Date: Wed, 13 May 2026 08:04:42 GMT
+Server: Apache/2.4.64 (Ubuntu)
+Content-Type: text/html; charset=iso-8859-1
+
+HTTP/1.1 500 Internal Server Error
+Date: Wed, 13 May 2026 10:06:37 GMT
+Server: Apache/2.4.64 (Ubuntu)
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
