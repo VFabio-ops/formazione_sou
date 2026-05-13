@@ -1,6 +1,7 @@
 Port Scanner con Netcat
 
-Questa esercitazione consiste in uno script Bash che implementa un semplice ma funzionale **port scanner**, utilizzando `netcat` (`nc`) per verificare quali porte TCP sono aperte su un host remoto in un intervallo definito dall'utente.
+Questa esercitazione consiste in uno script Bash che implementa un semplice ma funzionale **port scanner**, 
+utilizzando `netcat` (`nc`) per verificare quali porte TCP sono aperte su un host remoto in un intervallo definito dall'utente.
 
 **File:** `esercizi/port_scanner.sh`
 
