@@ -1,41 +1,37 @@
-# Apache Web Server & HTTP Status Code Testing
+# Apache Web Server e Test dei Codici di Stato HTTP
 
-A hands-on project to configure and run an Apache HTTP server on Ubuntu, 
-test a range of HTTP status codes through direct server configuration, 
-and trigger a 500 Internal Server Error via a Python Flask application served through mod_wsgi.
+Un progetto pratico per configurare ed eseguire un server HTTP Apache su Ubuntu, testare una serie di codici di stato HTTP tramite configurazione diretta del server e provocare un errore 500 Internal Server Error attraverso un'applicazione Python Flask servita tramite mod_wsgi.
 
 ---
 
----
+## Panoramica
 
-## Overview
+Questo progetto mostra come:
 
-This project demonstrates how to:
+- Configurare un VirtualHost Apache per servire un'applicazione Python Flask tramite `mod_wsgi`
+- Utilizzare le direttive Apache per produrre risposte HTTP specifiche (reindirizzamento 301, autenticazione 401)
+- Provocare deliberatamente un errore 500 Internal Server Error tramite un'applicazione Flask non funzionante
+- Osservare e interpretare gli header HTTP raw per ciascun codice di stato
 
-- Configure an Apache VirtualHost to serve a Python Flask application via `mod_wsgi`
-- Use Apache directives to produce specific HTTP responses (301 redirect, 401 authentication challenge)
-- Deliberately trigger a 500 Internal Server Error through a broken Flask application
-- Observe and interpret raw HTTP response headers for each status code
-
-The server runs on port 80 and uses the hostname `ubuntu_1`, configured inside a VirtualBox virtual machine.
+Il server è in ascolto sulla porta 80 e utilizza il nome host `ubuntu_1`, configurato all'interno di una macchina virtuale VirtualBox.
 
 ---
 
-## Requirements
+## Requisiti
 
-- Ubuntu (tested on the version shipping with Apache 2.4.64)
-- Apache2 with `mod_wsgi` enabled
-- Python 3 with `venv`
+- Ubuntu (testato con la versione che include Apache 2.4.64)
+- Apache2 con `mod_wsgi` abilitato
+- Python 3 con `venv`
 - Flask
 
-Install dependencies:
+Installazione delle dipendenze:
 
 ```bash
 sudo apt update
 sudo apt install apache2 libapache2-mod-wsgi-py3 python3-venv
 ```
 
-Enable the wsgi module:
+Abilitazione del modulo wsgi:
 
 ```bash
 sudo a2enmod wsgi
@@ -44,25 +40,25 @@ sudo systemctl restart apache2
 
 ---
 
-## Project Structure
+## Struttura del Progetto
 
 ```
 /home/vboxuser/myflaskapp/
-    venv/               # Python virtual environment
-    myflaskapp.wsgi     # WSGI entry point for Apache
-    app.py              # Flask application
+    venv/               # Ambiente virtuale Python
+    myflaskapp.wsgi     # Entry point WSGI per Apache
+    app.py              # Applicazione Flask
 
 /var/www/ubuntu_1/
-    error.log           # Apache error log
-    access.log          # Apache access log
+    error.log           # Log degli errori di Apache
+    access.log          # Log degli accessi di Apache
 
 /etc/apache2/sites-available/
-    HTTP_Host.conf      # VirtualHost configuration file
+    HTTP_Host.conf      # File di configurazione VirtualHost
 ```
 
 ---
 
-## Apache VirtualHost Configuration
+## Configurazione del VirtualHost Apache
 
 File: `HTTP_Host.conf`
 
@@ -90,9 +86,9 @@ File: `HTTP_Host.conf`
     CustomLog /var/www/ubuntu_1/access.log combined
 
 </VirtualHost>
+```
 
-
-To enable the site:
+Per abilitare il sito:
 
 ```bash
 sudo a2ensite HTTP_Host.conf
@@ -101,9 +97,9 @@ sudo systemctl reload apache2
 
 ---
 
-## Flask Application Setup
+## Configurazione dell'Applicazione Flask
 
-Create the virtual environment and install Flask:
+Creazione dell'ambiente virtuale e installazione di Flask:
 
 ```bash
 cd /home/vboxuser/myflaskapp
@@ -112,7 +108,7 @@ source venv/bin/activate
 pip install flask
 ```
 
-Example `myflaskapp.wsgi` entry point:
+Esempio di entry point `myflaskapp.wsgi`:
 
 ```python
 import sys
@@ -120,7 +116,7 @@ sys.path.insert(0, '/home/vboxuser/myflaskapp')
 from app import app as application
 ```
 
-Example `app.py` that deliberately raises a 500 error:
+Esempio di `app.py` che provoca deliberatamente un errore 500:
 
 ```python
 from flask import Flask
@@ -129,23 +125,23 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    raise Exception("Deliberate internal server error for testing")
+    raise Exception("Errore interno del server provocato deliberatamente per il test")
 
 if __name__ == '__main__':
     app.run()
 ```
 
-When Apache passes a request to this application and the exception is unhandled, it returns an HTTP 500 response to the client.
+Quando Apache inoltra una richiesta a questa applicazione e l'eccezione non viene gestita, restituisce una risposta HTTP 500 al client.
 
 ---
 
-## HTTP Status Codes Tested
+## Codici di Stato HTTP Testati
 
-The following responses were captured from the server during testing.
+Di seguito sono riportate le risposte catturate dal server durante i test.
 
 ### 200 OK
 
-The server successfully returned the requested resource.
+Il server ha restituito con successo la risorsa richiesta.
 
 ```
 HTTP/1.1 200 OK
@@ -161,7 +157,7 @@ Content-Type: text/html
 
 ### 301 Moved Permanently
 
-Triggered by uncommenting the `Redirect 301` directive in the VirtualHost configuration. The client is instructed to follow the `Location` header permanently.
+Attivato decommentando la direttiva `Redirect 301` nella configurazione del VirtualHost. Il client viene istruito a seguire permanentemente l'header `Location`.
 
 ```
 HTTP/1.1 301 Moved Permanently
@@ -173,7 +169,7 @@ Content-Type: text/html; charset=iso-8859-1
 
 ### 401 Unauthorized
 
-Triggered by uncommenting the `AuthType Basic` block and generating a `.htpasswd` file. The server challenges the client for credentials.
+Attivato decommentando il blocco `AuthType Basic` e generando un file `.htpasswd`. Il server richiede le credenziali al client.
 
 ```
 HTTP/1.1 401 Unauthorized
@@ -183,7 +179,7 @@ WWW-Authenticate: Basic realm="admin area"
 Content-Type: text/html; charset=iso-8859-1
 ```
 
-To generate the `.htpasswd` file:
+Per generare il file `.htpasswd`:
 
 ```bash
 sudo htpasswd -c /etc/apache2/.htpasswd admin
@@ -191,7 +187,7 @@ sudo htpasswd -c /etc/apache2/.htpasswd admin
 
 ### 404 Not Found
 
-Returned when a client requests a path that does not exist on the server.
+Restituito quando il client richiede un percorso che non esiste sul server.
 
 ```
 HTTP/1.1 404 Not Found
@@ -202,7 +198,7 @@ Content-Type: text/html; charset=iso-8859-1
 
 ### 500 Internal Server Error
 
-Triggered by the Flask application raising an unhandled exception. Apache receives the failure from the WSGI process and returns a 500 to the client. Note the `Connection: close` header, which indicates the server closed the connection after the error.
+Attivato dall'applicazione Flask che genera un'eccezione non gestita. Apache riceve il fallimento dal processo WSGI e restituisce un 500 al client. Si noti l'header `Connection: close`, che indica che il server ha chiuso la connessione dopo l'errore.
 
 ```
 HTTP/1.1 500 Internal Server Error
@@ -214,53 +210,52 @@ Content-Type: text/html; charset=iso-8859-1
 
 ---
 
-## Configuration Details
+## Dettagli di Configurazione
 
-### Switching Between Scenarios
+### Passaggio tra gli Scenari
 
-The VirtualHost file uses comments to toggle between different server behaviors. Uncommenting specific blocks changes the server response:
+Il file VirtualHost utilizza i commenti per alternare i diversi comportamenti del server. Decommentare blocchi specifici modifica la risposta restituita:
 
-- Remove the comment from `Redirect 301` to produce a 301 response on all requests.
-- Remove the comment from the `AuthType Basic` block to require HTTP Basic Authentication, producing a 401 on unauthenticated requests.
-- The Flask application with an unhandled exception produces the 500 without any Apache directive change.
+- Decommentare `Redirect 301` per produrre una risposta 301 su tutte le richieste.
+- Decommentare il blocco `AuthType Basic` per richiedere l'autenticazione HTTP Basic, producendo una risposta 401 per le richieste non autenticate.
+- L'applicazione Flask con un'eccezione non gestita produce il codice 500 senza alcuna modifica alle direttive Apache.
 
-After editing the configuration file, always reload Apache:
+Dopo aver modificato il file di configurazione, ricaricare sempre Apache:
 
 ```bash
 sudo systemctl reload apache2
 ```
 
-### Log Files
+### File di Log
 
-Access and error logs are written to `/var/www/ubuntu_1/`:
+I log di accesso e di errore vengono scritti in `/var/www/ubuntu_1/`:
 
 ```bash
-# Monitor access in real time
+# Monitorare gli accessi in tempo reale
 sudo tail -f /var/www/ubuntu_1/access.log
 
-# Monitor errors in real time
+# Monitorare gli errori in tempo reale
 sudo tail -f /var/www/ubuntu_1/error.log
 ```
 
 ---
 
-## Testing
+## Test
 
-Send raw HTTP requests using `curl` with the `-I` flag to inspect response headers:
+Inviare richieste HTTP raw usando `curl` con il flag `-I` per ispezionare gli header di risposta:
 
 ```bash
-# Test the default response
+# Testare la risposta predefinita
 curl -I http://ubuntu_1
 
-# Follow redirects
+# Seguire i reindirizzamenti
 curl -IL http://ubuntu_1
 
-# Test with credentials for Basic Auth
+# Testare con credenziali per l'autenticazione Basic
 curl -I -u admin:password http://ubuntu_1
 
-# Request a non-existent path for 404
+# Richiedere un percorso inesistente per ottenere un 404
 curl -I http://ubuntu_1/nonexistent
 ```
 
-To verify the server identity and version in the response headers, look for the `Server` field, 
-which in this setup returns `Apache/2.4.64 (Ubuntu)`.
+Per verificare l'identità e la versione del server negli header di risposta, cercare il campo `Server`, che in questa configurazione restituisce `Apache/2.4.64 (Ubuntu)`.
