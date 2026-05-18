@@ -483,7 +483,7 @@ sudo tail -f /var/log/apache2/radio_access.log
 |---|---|---|
 | AzuraCast pannello web | 8000 | http://192.168.56.10 (via Apache :80) |
 | Apache reverse proxy | 80 | http://radio.local |
-| Icecast streaming | 8080 | http://192.168.56.10:8080/radio.mp3 |
+| Icecast streaming | 8080 | http://192.168.56.10/public/webradio |
 | Live streamer (BUTT) | 8005 | 192.168.56.10:8005 |
 | AzuraCast SFTP | 2022 | sftp://192.168.56.10:2022 |
 
