@@ -506,7 +506,6 @@ sudo tail -f /var/log/apache2/radio_access.log
 
 | Risorsa | URL |
 |---|---|
-| Aranzulla — Come creare una radio online | https://www.aranzulla.it/come-creare-una-radio-online-gratis-10114.html |
 | ITHost — Guida tecnica web radio | https://www.ithost.it/it/guide/streaming/creare-una-web-radio |
 | RadioSpeaker — Strumentazione low budget | https://www.radiospeaker.it/blog/web-radio-strumentazione-low-budget/ |
 | PartitaIVA — Aspetti legali web radio | https://www.partitaiva.it/come-aprire-radio/ |
