@@ -1,0 +1,59 @@
+Vagrant.configure("2") do |config|
+
+  # Sistema operativo: Ubuntu 22.04 LTS
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.hostname = "web-radio"
+
+  # Porte esposte sull'host (opzionale, per accesso diretto)
+  config.vm.network "private_network", ip: "192.168.56.10"
+  config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1" # Apache
+  config.vm.network "forwarded_port", guest: 8000, host: 8000, host_ip: "127.0.0.1"  # AzuraCast
+  config.vm.network "forwarded_port", guest: 8443, host: 8443, host_ip: "127.0.0.1"  # AzuraCast HTTPS
+  config.vm.network "forwarded_port", guest: 8005, host: 8005, host_ip: "127.0.0.1"  # Icecast stream
+
+  # Risorse della VM
+  config.vm.provider "virtualbox" do |vb|
+    vb.name   = "web-radio"
+    vb.memory = "2048"   # 2 GB RAM (minimo consigliato per AzuraCast)
+    vb.cpus   = 2
+  end
+
+  # Provisioning automatico (eseguito al primo avvio)
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "==> Aggiornamento sistema..."
+    apt-get update -qq && apt-get upgrade -y -qq > /dev/null 2>&1
+
+    echo "==> Installazione Apache..."
+    apt-get install -y apache2
+    a2enmod proxy proxy_http proxy_wstunnel headers rewrite
+    systemctl enable apache2
+
+    echo "==> Installazione dipendenze AzuraCast..."
+    # Con questo blocco:
+    apt-get install -y ca-certificates curl gnupg
+    install -m 0755 -d /etc/apt/keyrings
+
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+       gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    chmod a+r /etc/apt/keyrings/docker.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+    https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null
+    apt-get update
+    apt-get install -y docker-ce docker-ce-cli containerd.io \
+      docker-buildx-plugin docker-compose-plugin
+    usermod -aG docker vagrant
+
+    echo "==> Download AzuraCast..."
+    mkdir -p /var/azuracast
+    cd /var/azuracast
+    curl -fsSL https://raw.githubusercontent.com/AzuraCast/AzuraCast/stable/docker.sh \
+      -o docker.sh
+    chmod +x docker.sh
+
+    echo "==> Provisioning completato!"
+    echo "    Ora SSH nella VM e avvia AzuraCast manualmente."
+  SHELL
+
+end
