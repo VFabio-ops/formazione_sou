@@ -1,22 +1,7 @@
-# 📻 Web Radio locale — Guida definitiva
+# Web Radio locale Guida
 ### Stack: Vagrant + Ubuntu 22.04 + Apache + AzuraCast (Docker)
 
 > Guida completa per installare, configurare e risolvere i problemi di una web radio locale con supporto a playlist automatiche e dirette live.
-
----
-
-## Indice
-
-1. [Architettura](#architettura)
-2. [Prerequisiti](#prerequisiti)
-3. [Installazione passo per passo](#installazione)
-4. [Configurazione Apache](#configurazione-apache)
-5. [Setup AzuraCast](#setup-azuracast)
-6. [Caricare musica e creare playlist](#musica-e-playlist)
-7. [Dirette live con BUTT](#dirette-live)
-8. [Troubleshooting](#troubleshooting)
-9. [Comandi utili](#comandi-utili)
-10. [Riferimenti e risorse](#riferimenti)
 
 ---
 
@@ -239,7 +224,7 @@ http://192.168.56.10      (IP diretto)
 
 ### Configurare la porta di Icecast
 
-> ⚠️ La porta di default di Icecast è `8000`, ma quella porta è già usata dal processo web di AzuraCast. Va cambiata obbligatoriamente.
+> La porta di default di Icecast è `8000`, ma quella porta è già usata dal processo web di AzuraCast. Va cambiata obbligatoriamente.
 
 Nel pannello:
 1. **Stazioni** → **Modifica stazione** → scheda **Frontend (Broadcasting)**
@@ -278,7 +263,7 @@ In AzuraCast: **Stazione** → **Streamer/DJ** → crea un account DJ con userna
 
 ## Troubleshooting
 
-### ❌ Errore: `'name' does not match any of the regexes: '^x-'`
+### Errore: `'name' does not match any of the regexes: '^x-'`
 
 **Sintomo:** `sudo ./docker.sh install` fallisce con questo errore.
 
@@ -318,7 +303,7 @@ docker compose version   # deve mostrare v2.x.x (senza trattino)
 
 ---
 
-### ❌ Errore: `Command "azuracast:account:create" is not defined`
+### Errore: `Command "azuracast:account:create" is not defined`
 
 **Sintomo:** Il comando CLI non esiste nelle versioni recenti di AzuraCast.
 
@@ -348,7 +333,7 @@ azuracast:account:set-administrator
 
 ---
 
-### ❌ Errore: AzuraCast mostra l'IP pubblico invece di quello della VM
+### Errore: AzuraCast mostra l'IP pubblico invece di quello della VM
 
 **Sintomo:** Al termine dell'installazione appare `Visita http://188.x.x.x` (IP pubblico del server) invece di `http://192.168.56.10`.
 
@@ -370,7 +355,7 @@ ssh -L 8080:localhost:80 utente@IP_SERVER
 
 ---
 
-### ❌ Errore: `Could not create listener socket on port 8000` (Icecast)
+### Errore: `Could not create listener socket on port 8000` (Icecast)
 
 **Sintomo:** Il log `/var/azuracast/stations/webradio/config/icecast.log` mostra in loop:
 ```
@@ -396,7 +381,7 @@ tail -f /var/azuracast/stations/webradio/config/icecast.log
 
 ---
 
-### ❌ Errore: `Queue is empty!` — nessun audio dallo stream
+### Errore: `Queue is empty!` — nessun audio dallo stream
 
 **Sintomo:** Il log di Liquidsoap mostra in loop:
 ```
@@ -422,7 +407,7 @@ curl -s -o /dev/null -w "%{http_code}" http://192.168.56.10:8080/radio.mp3
 
 ---
 
-### ❌ BUTT non si connette alla porta 8005
+### BUTT non si connette alla porta 8005
 
 **Sintomo:** BUTT non riesce a stabilire la connessione per la diretta live.
 
