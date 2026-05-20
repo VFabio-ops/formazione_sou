@@ -1,0 +1,18 @@
+Vagrant.configure("2") do |config|
+    config.vm.box = "bento/ubuntu-22.04"
+
+    config.vm.provider "virtualbox" do |vb|
+        vb.memory = "2048"
+        vb.cpus = 2
+    end
+
+    config.vm.hostname = "gitea"
+    config.vm.network "private_network", ip: "192.168.56.10"
+
+    # Gitea web UI
+    config.vm.network "forwarded_port", guest: 3000, host: 3000, host_ip: "127.0.0.1"
+    # Gitea SSH (Git push/pull)
+    config.vm.network "forwarded_port", guest: 22, host: 2201, host_ip: "127.0.0.1"
+
+    config.vm.provision "shell", path: "Provision.sh"
+end
