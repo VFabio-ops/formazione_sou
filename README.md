@@ -1,6 +1,6 @@
 # formazione_sou
 
-Repository dedicata alla formazione, contenente esercitazioni pratiche e script Bash commentati su temi fondamentali di amministrazione di sistema Linux, sicurezza e gestione dei permessi.
+Repository dedicata alla formazione, contenente esercitazioni pratiche e script Bash commentati su temi fondamentali di amministrazione di sistema Linux, sicurezza, gestione dei permessi, scripting, orchestrazione VM (Vagrant) orchestrazione container (Docker/Podman).
 
 ---
 
@@ -14,7 +14,7 @@ git clone https://github.com/VFabio-ops/formazione_sou.git
 cd formazione_sou
 
 # 3. Naviga nella cartella dell'esercitazione di interesse
-cd esercizi/ssl_certificate
+cd Esercizi/Array
 
 ```
 
