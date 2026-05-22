@@ -1,0 +1,112 @@
+Vagrant.configure("2") do |config|
+    config.vm.box = "bento/ubuntu-24.04"
+    
+    config.vm.provider "virtualbox" do |vb|
+        vb.memory = "2048"
+        vb.cpus = 2
+    end
+
+    config.vm.define "m1" do |m1|
+        m1.vm.hostname = "m1"
+        m1.vm.network "private_network", ip: "192.168.100.2"
+    end
+
+    config.vm.define "m2" do |m2|
+        m2.vm.hostname = "m2"
+        m2.vm.network "private_network", ip: "192.168.100.3"
+    end
+    
+    config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get upgrade -y
+    apt-get install -y apache2
+    apt-get install -y openssh-server
+    apt-get install -y docker.io
+
+    mkdir -p /etc/docker-monitor
+    touch /etc/docker-monitor/docker-monitor.sh
+    cat > /etc/docker-monitor/docker-monitor.sh << EOF
+#!/bin/bash
+# docker-monitor.sh
+# Monitora i container farmer, wolf, sheep, cabbage
+# e applica regole di spegnimento basate sulla loro presenza.
+ 
+INTERVAL=1  # secondi tra ogni check
+ 
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a /var/log/docker-monitor.log
+}
+ 
+is_running() {
+    docker inspect -f '{{.State.Running}}' "$1" 2>/dev/null | grep -q "true"
+}
+ 
+stop_container() {
+    local name="$1"
+    if is_running "$name"; then
+        log "ACTION: Arresto container '$name'"
+        docker stop "$name"
+    fi
+}
+ 
+log "=== docker-monitor avviato ==="
+ 
+while true; do
+    # Controlla ogni container: 1 = running, 0 = non running
+    is_running "farmer"  && farmer=1  || farmer=0
+    is_running "wolf"    && wolf=1    || wolf=0
+    is_running "sheep"   && sheep=1   || sheep=0
+    is_running "cabbage" && cabbage=1 || cabbage=0
+ 
+    # Regola 1: manca farmer, ci sono wolf + sheep + cabbage → spegni sheep e cabbage
+    if [ "$farmer" -eq 0 ] && [ "$wolf" -eq 1 ] && [ "$sheep" -eq 1 ] && [ "$cabbage" -eq 1 ]; then
+        log "REGOLA 1: farmer assente, wolf/sheep/cabbage presenti -> arresto sheep e cabbage"
+        stop_container "sheep"
+        stop_container "cabbage"
+ 
+    # Regola 2: mancano farmer e cabbage → spegni sheep
+    elif [ "$farmer" -eq 0 ] && [ "$cabbage" -eq 0 ] && [ "$sheep" -eq 1 ]; then
+        log "REGOLA 2: farmer e cabbage assenti -> arresto sheep"
+        stop_container "sheep"
+ 
+    # Regola 3: mancano farmer e wolf → spegni cabbage
+    elif [ "$farmer" -eq 0 ] && [ "$wolf" -eq 0 ] && [ "$cabbage" -eq 1 ]; then
+        log "REGOLA 3: farmer e wolf assenti -> arresto cabbage"
+        stop_container "cabbage"
+    fi
+ 
+    sleep "$INTERVAL"
+done
+EOF
+
+chmod +x /etc/docker-monitor/docker-monitor.sh
+touch /etc/systemd/system/docker-monitor.service
+cat > /etc/systemd/system/docker-monitor.service << EOF
+[Unit]
+Description=Docker Container Monitor (farmer/wolf/sheep/cabbage)
+Documentation=file:/etc/docker-monitor/docker-monitor.sh
+After=docker.service network-online.target
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /etc/docker-monitor/docker-monitor.sh
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=docker-monitor
+
+# Sicurezza base
+NoNewPrivileges=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl daemon-reload
+sudo systemctl enable docker-monitor
+sudo systemctl restart docker-monitor
+        SHELL
+end
