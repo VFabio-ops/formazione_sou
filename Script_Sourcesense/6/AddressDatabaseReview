@@ -1,0 +1,21 @@
+# Questo script inizia con la dichiarazione di un array, in questo caso,
+# associativo (declare -A) la flag -A serve a definire un array associativo.
+
+# Le prime 3 variabili consistono appunto in un array con lo stesso nome,
+# da cui si distingue dagli altri tramite la "chiave" ovvero il contenuto 
+# all'interno delle parentesi quadre [Charles]\[John]\[Wilma]
+# in base alla chiave il valore risulta diverso
+
+# Ne abbiamo la prova con i comandi di seguito.
+# echo "Charles's address is ${address[Charles]}.": serve a stampare il valore 
+# della chiave [Charles] all'interno dell'array {address[]}, in questo caso:
+# "414 W. 10th Ave., Baltimore, MD 21236"
+
+# echo "Wilma's address is ${address[Wilma]}." invece stampa: "1854 Vermont Ave, Los Angeles, CA 90023"
+
+# echo "John's address is ${address[John]}." e qui: "202 E. 3rd St., New York, NY 10009"
+
+# un "echo" vuoto che lascia uno spazio
+
+# l'ultimo echo "${!address[*]}" stampa tutte le chiavi grazie a ! che richiama le chiavi degli array
+# e * che le richiama tutte

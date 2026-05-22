@@ -1,0 +1,29 @@
+# Il primo "echo" vuoto serve per creare uno spazio letteralmente stampandolo
+
+# A seguire viene dichiarata una variabile "a" con valore 879,
+# ovvero ogni volta che verrà richiamata la $a, verrà restituito il valore 879
+
+# Il secondo "echo" serve per stampare la frase "The value of \"a\" is $a."
+# che come abbiamo detto prima stamperà: "The value of \"a\" is 879."
+
+# subito dopo troviamo un let, che permette alla varibile $a di essere modificata,
+# in questo caso c'è una somma, 16+5, quindi la variabile $a ora avrà il valore 21.
+
+# C'è infatti il terzo "echo" che stampa: "The value of \"a\" is now $a.", 
+# ovvero: "The value of \"a\" is now 21."
+
+# Un altro "echo" vuoto per creare uno spazio
+
+# Ora ci imbattiamo in un for loop, che serve per eseguire un blocco di codice un certo numero di volte.
+# In questo caso, il loop consiste nel variare il valore di $a in una stringa di numeri, ovvero 7 8 9 11.
+
+# All'interno del loop, c'è un "echo" che stampa, in linea grazie alla flag -n, il valore di $a, ovvero 7 8 9 11.
+
+
+# troviamo poi altri due "echo" vuoti per creare spazi
+
+# Alla fine del codice troviamo un "echo" -n che stampa in linea "Enter a",
+# poi un read a, che mette lo script in attesa di un input e infine un "echo"
+# che stampa: "The value of \"a\" is now $a.", ovvero il valore inserito dall'utente.
+
+# Un ultimo "echo" per creare uno spazio ulteriore e un exit 0 per terminare lo script con successo.

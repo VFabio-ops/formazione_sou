@@ -1,0 +1,13 @@
+# In questo script troviamo un "echo hello" che stampa, appunto, "hello"
+
+# A seguire un secondo "echo" che sta volta stampa "$?" che sarebbe la variabile 
+# per verificare l'exit status, che in questo caso sarà 0,
+# vista la riuscita del comando precedente.
+
+# Poi troviamo di seguito un comando sconosciuto, che darà un error:line 5: lskdf: command not found
+# proprio perché non viene riconosciuto.
+
+# A conferma di ciò c'è il comando "echo $?" che questa volta stampa 127 come exit code,
+# ovvero comando sconosciuto.
+
+# Alla fine troviamo un exit 113 che appunto darà 113 come status code se richiamato.

@@ -1,0 +1,40 @@
+# Questo script inizia con l'assegnazione di 2 variabili
+
+# La prima cosa che notiamo è la presenza di un blocco separato dalle graffe {}
+# la differenza con quelle tonde () è che il blocco viene eseguito nella 
+# shell dello script
+
+# All'interno del blocco ci imbattiamo in "trap" che permette di "intrappolare" 
+# un segnale e definisce cosa farci, in questo caso accade che quando il processo
+# riceve un segnale SIGUSR1 esegue un exit e termina lo script.
+
+# Il doppio sleep usa il valore di "$interval", quindi aspetta due volte per lo stesso valore
+
+# All'interno del blocco troviamo un ciclo while true, ovvero un ciclo che permette
+# l'esecuzione fino a quando non cambia la condizione o viene interrotto.
+
+# All'interno del ciclo c'è un "echo" che stampa un punto "." e poi aspetta
+# tanto quanto il valore di "$interval", ovvero 1, prima di ripetere il blocco
+# La & all'esterno serve per mettere in background tutto il blocco, per permettere
+# allo script di essere eseguito senza aspettare
+
+# Usciti dal blocco ci ritroviamo a un'altra variabile il cui valore equivale al PID
+# dell'ultimo processo in background
+
+# Troviamo un altro "trap" che quando rileva un "EXIT" lancia questo comando
+# "echo !; kill -USR1 $pid; wait $pid", che stampa al posto delle variabili, il PID     
+# dell'ultimo processo appunto.
+
+# A seguire c'è un "echo -n" che stampa una stringa sulla stessa linea
+
+# Un altro sleep che stavolta usa il valore della seconda variabile,
+# quindi aspetta 10s
+# poi stampa la parola " Finished!" con l'utilizzo del comando "echo"
+
+# il comando kill server per terminare i processi, in questo caso termina l'ultimo processo
+# di conseguenza, aspetta che il processo con quel valore termini 
+# l'ultimo "trap" azzera quello precedente così da evitare output non voluti
+
+# Poi c'è l'exit $? che fornisce l'exit status dell'ultimo comando eseguito nello script
+
+# Quindi se tutto è andato bene, l'exit status sarà 0
