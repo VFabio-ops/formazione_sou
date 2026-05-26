@@ -1,0 +1,29 @@
+---
+- name: provision
+  hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+    - name: create user
+      user:
+        name: tux
+        state: present
+        shell: /bin/bash
+        password: "{{ 'Password1' | password_hash('sha512') }}"
+        update_password: on_create
+    - name: sshd password
+      lineinfile:
+          path: /etc/ssh/sshd_config
+          regexp: '^PasswordAuthentication '
+          insertafter: '#PasswordAuthentication' 
+          line: 'PasswordAuthentication yes '
+      notify: restart_sshd
+    - name: sudo
+      copy:
+        dest: /etc/sudoers.d/tux
+        content: "tux ALL=(root) NOPASSWD: ALL"
+  handlers:
+    - name: restart_sshd
+      service:
+        name: sshd
+        state: restarted
