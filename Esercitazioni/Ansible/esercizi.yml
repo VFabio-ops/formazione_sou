@@ -1,6 +1,38 @@
----
 - hosts: all
   become: true
   become_user: root
   tasks:
-    - name:
+    - name: Install EPEL repository
+      ansible.builtin.dnf:
+        name: epel-release
+        state: present
+    - name: Update index
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+    - name: Install Apache
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+    - name : Start Apache
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+    - name: Install php
+      ansible.builtin.dnf:
+        name: php
+        state: latest
+    - name: Restart Apache
+      service:
+        name: httpd
+        state: started
+    - name: Install tool
+      ansible.builtin.dnf:
+        name:
+          - curl
+          - wget
+          - python3-pip
+          - htop
+        state: present
+    
