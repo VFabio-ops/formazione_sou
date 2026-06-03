@@ -63,11 +63,15 @@
             aux_addresses:
               host1: 172.20.37.2
 
-    - name: Create a Docker Container with static IP
+    - name: Install Jenkins Container
       community.docker.docker_container:
-        name: my_container
-        image: nginx:latest
+        name: jenkins
+        image: jenkins/jenkins:latest
         state: started
         networks:
           - name: my_network
             ipv4_address: 172.20.37.3
+        ports:
+          - "8080:8080"
+          - "50000:50000"
+        
