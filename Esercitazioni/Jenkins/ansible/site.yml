@@ -1,0 +1,44 @@
+---
+- name: "Setup infrastruttura DevOps"
+  hosts: devops
+  become: true
+
+  pre_tasks:
+    - name: "Aggiornamento cache DNF"
+      ansible.builtin.dnf:
+        update_cache: true
+      changed_when: false
+
+    - name: "Installazione pacchetti di base"
+      ansible.builtin.dnf:
+        name:
+          - curl
+          - wget
+          - git
+          - vim
+          - python3
+          - python3-pip
+        state: present
+
+  roles:
+    - role: podman
+      tags: [runtime, podman]
+
+    - role: container_network
+      tags: [network]
+    
+    - role: jenkins_master
+      tags: [jenkins, master]
+    
+    - role: jenkins_agent
+      tags: [jenkins, agent]
+
+  post_tasks:
+    - name: Verifica stato container
+      ansible.builtin.command: "{{ container_runtime }} ps --format 'table {% raw %}{{.Names}}\t{{.Status}}\t{{.Ports}}{% endraw %}'"
+      register: container_status
+      changed_when: false
+
+    - name: Mostra container in esecuzione
+      ansible.builtin.debug:
+        msg: "{{ container_status.stdout_lines }}"
