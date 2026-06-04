@@ -1,0 +1,57 @@
+---
+- name: Installazione podman
+  ansible.builtin.dnf: 
+    name: 
+      - podman
+      - podman-compose
+      - buildah
+      - skopeo
+      - python3-podman
+      - python3-requests
+    state: present
+
+- name: Abilitazione del socket Podman (per API REST)
+  ansible.builtin.systemd:
+    name: podman.socket
+    state: started
+    enabled: true
+
+- name: Verifica dell'installazione di Podman
+  ansible.builtin.command: podman --version
+  register: podman_ver 
+  changed_when: false
+
+- name: Mostra versione Podman
+  ansible.builtin.debug:
+    msg: "Podman version: {{ podman_ver.stdout }}"
+
+- name: Configurazioni registri Podman
+  ansible.builtin.copy:
+    dest: /etc/containers/registries.conf.d/01-docker-hub.conf
+    content: |
+      [[registry]]
+      location = "docker.io"
+      insecure = false
+    mode: '0644'
+
+- name: "[Podman] Creazione rete {{ container_network_name }}"
+  containers.podman.podman_network:
+    name: "{{ container_network_name }}"
+    state: present
+    subnet: "{{ container_network_subnet }}"
+    gateway: "{{ container_network_gateway }}"
+    driver: bridge
+    dns:
+      - "4.4.4.4"
+      - "8.8.8.8"
+    ipv6: false
+  when: container_runtime == 'podman'
+
+- name: "Verifica rete {{ container_network_name }}"
+  ansible.builtin.command: "{{ container_runtime }} network inspect {{ container_network_name }}"
+  register: network_inspect
+  changed_when: false
+
+- name: "Mostra dettagli rete"
+  ansible.builtin.debug:
+    msg: "Rete '{{ container_network_name }}' configurata correttamente"

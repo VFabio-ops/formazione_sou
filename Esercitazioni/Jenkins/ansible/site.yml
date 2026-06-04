@@ -1,6 +1,7 @@
 ---
 - name: "Setup infrastruttura DevOps"
-  hosts: devops
+  hosts: all
+  gather_facts: false
   become: true
 
   pre_tasks:

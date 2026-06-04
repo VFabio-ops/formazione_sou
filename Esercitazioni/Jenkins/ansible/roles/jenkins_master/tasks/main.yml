@@ -1,0 +1,53 @@
+---
+- name: "Creazione directory per Jenkins"
+  ansible.builtin.file:
+    path: "{{ jenkins_master_data_dir }}"
+    state: directory
+    mode: '0755'
+    owner: 1000
+    group: 1000
+    
+- name: "Podman avvio container Jenkins Master"
+  containers.podman.podman_container:
+    name: "{{ jenkins_master_container_name }}"
+    image: "{{ jenkins_master_image }}"
+    state: started
+    restart_policy: always
+    network: "{{ container_network_name }}"
+    ip: "{{ jenkins_master_ip }}"
+    ports:
+      - "{{ jenkins_master_http_port }}:8080"
+      - "{{ jenkins_master_agent_port }}:50000"
+    volumes:
+      - "{{ jenkins_master_data_dir }}:/var/jenkins_home:Z"
+    env:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false -Xmx2g"
+  when: container_runtime == 'podman'
+
+- name: "Attesa avvio Jenkins Master"
+  ansible.builtin.uri:
+    url: "http://{{ jenkins_master_ip }}:8080/login"
+    method: GET
+    status_code: 200
+    validate_certs: false
+  register: jenkins_health
+  until: jenkins_health.status == 200
+  retries: 20
+  delay: 10
+
+- name: "Jenkins avviato con successo"
+  ansible.builtin.debug:
+    msg: "Jenkins Master accessibile all'indirizzo http://localhost:8080 o http://{{ jenkins_master_ip }}:8080"
+
+- name: "Recupero password amministratore iniziale"
+  ansible.builtin.command: >
+    {{ container_runtime }} exec {{ jenkins_master_container_name }}
+    cat /var/jenkins_home/secrets/initialAdminPassword
+  register: jenkins_initial_password
+  changed_when: false
+  ignore_errors: true
+
+- name: "Password amministratore Jenkins"
+  ansible.builtin.debug:
+    msg: "La password per il primo accesso è: {{ jenkins_initial_password.stdout }}"
+  when: jenkins_initial_password.rc == 0
