@@ -4,9 +4,60 @@
     path: "{{ jenkins_master_data_dir }}"
     state: directory
     mode: '0755'
-    owner: 1000
-    group: 1000
-    
+    owner: "1000"
+    group: "1000"
+
+- name: "Creazione directory script init.groovy.d"
+  ansible.builtin.file:
+    path: "{{ jenkins_master_data_dir }}/init.groovy.d"
+    state: directory
+    mode: '0755'
+    owner: "1000"
+    group: "1000"
+
+- name: "Script Groovy per utente admin"
+  ansible.builtin.copy:
+    dest: "{{ jenkins_master_data_dir }}/init.groovy.d/01_create_admin.groovy"
+    owner: "1000"
+    group: "1000"
+    mode: '0644'
+    content: |
+      import jenkins.model.*
+      import hudson.security.*
+      import jenkins.security.s2m.AdminWhitelistRule
+
+      def instance = Jenkins.getInstance()
+
+      // Configura il security realm con database utenti locale
+      def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+      hudsonRealm.createAccount("{{ jenkins_admin_user }}", "{{ jenkins_admin_password }}")
+      instance.setSecurityRealm(hudsonRealm)
+
+      // Autorizza solo gli utenti loggati a fare tutto
+      def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
+      strategy.setAllowAnonymousRead(false)
+      instance.setAuthorizationStrategy(strategy)
+
+      // Abilita Agent-to-Master Security con whitelist
+      instance.getInjector().getInstance(AdminWhitelistRule.class).setMasterKillSwitch(false)
+
+      instance.save()
+
+- name: "Creazione script Groovy per disabilitare wizard"
+  ansible.builtin.copy:
+    dest: "{{ jenkins_master_data_dir }}/init.groovy.d/00_disable_wizard.groovy"
+    owner: "1000"
+    group: "1000"
+    mode: '0644'
+    content: |
+     import jenkins.model.Jenkins
+      import jenkins.install.InstallState
+
+      def instance = Jenkins.getInstance()
+      if (!instance.installState.isSetupComplete()) {
+        instance.installState = InstallState.INITIAL_SETUP_COMPLETED
+      }
+
 - name: "Podman avvio container Jenkins Master"
   containers.podman.podman_container:
     name: "{{ jenkins_master_container_name }}"
@@ -21,7 +72,7 @@
     volumes:
       - "{{ jenkins_master_data_dir }}:/var/jenkins_home:Z"
     env:
-      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false -Xmx2g"
+      JAVA_OPTS: "-Xmx2g"
   when: container_runtime == 'podman'
 
 - name: "Attesa avvio Jenkins Master"
@@ -35,19 +86,21 @@
   retries: 20
   delay: 10
 
+- name: "Verifica autenticazione API Jenkins"
+  ansible.builtin.uri:
+    url: "http://{{ jenkins_master_ip }}:8080/api/json"
+    method: GET
+    user: "{{ jenkins_admin_user }}"
+    password: "{{ jenkins_admin_password }}"
+    force_basic_auth: true
+    status_code: 200
+    validate_certs: false
+  register: api_check
+  until: api_check.status == 200
+  retries: 15
+  delay: 10
+
 - name: "Jenkins avviato con successo"
   ansible.builtin.debug:
     msg: "Jenkins Master accessibile all'indirizzo http://localhost:8080 o http://{{ jenkins_master_ip }}:8080"
 
-- name: "Recupero password amministratore iniziale"
-  ansible.builtin.command: >
-    {{ container_runtime }} exec {{ jenkins_master_container_name }}
-    cat /var/jenkins_home/secrets/initialAdminPassword
-  register: jenkins_initial_password
-  changed_when: false
-  ignore_errors: true
-
-- name: "Password amministratore Jenkins"
-  ansible.builtin.debug:
-    msg: "La password per il primo accesso è: {{ jenkins_initial_password.stdout }}"
-  when: jenkins_initial_password.rc == 0

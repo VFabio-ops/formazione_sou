@@ -1,0 +1,53 @@
+---
+- name: "Verifica raggiungibilità del master Jenkins"
+  ansible.builtin.uri:
+    url: "http://{{ jenkins_master_ip }}:8080/login"
+    method: GET
+    status_code: 200
+  register: master_check
+
+- name: "Creazione directory workspace per l'agent"
+  ansible.builtin.file:
+    path: "{{ jenkins_agent_data_dir }}"
+    state: directory
+    mode: '0755'
+    owner: "1000"
+    group: "1000"
+
+- name: "[Podman] Avvio container Jenkins Agent"
+  containers.podman.podman_container:
+    name: "{{ jenkins_agent_container_name }}"
+    image: "{{ jenkins_agent_image }}"
+    state: started
+    restart_policy: always
+    network: "{{ container_network_name}}"
+    ip: "{{ jenkins_agent_ip}}"
+    volumes: 
+      - "{{ jenkins_agent_data_dir }}:/home/jenkins/agent:Z"
+    env:
+      JENKINS_URL: "http://{{ jenkins_master_ip }}:8080"
+      JENKINS_AGENT_NAME: "{{ jenkins_agent_name }}"
+      JENKINS_SECRET: "{{ jenkins_agent_secret }}"
+      JENKINS_AGENT_WORKDIR: "/home/jenkins/agent"
+      JENKINS_TUNNEL: "{{ jenkins_master_ip }}:{{ jenkins_master_agent_port }}"
+  when: container_runtime == 'podman'
+
+- name: "Attesa connessione Agent al Master (30-60 secondi)"
+  ansible.builtin.uri:
+    url: "http://{{ jenkins_master_ip }}:8080/computer/{{ jenkins_agent_name }}/api/json"
+    method: GET
+    user: "Admin"
+    password: "{{ jenkins_admin_password }}"
+    force_basic_auth: true
+    return_content: true
+    status_code: 200
+  register: agent_status
+  until: >
+    agent_status.json is defined and
+    not agent_status.json.offline
+  retries: 12
+  delay: 10
+
+- name: "Agent connesso al Master con successo"
+  ansible.builtin.debug:
+    msg: "L'agent {{ jenkins_agent_name }} è connesso al master Jenkins e pronto per le build!"

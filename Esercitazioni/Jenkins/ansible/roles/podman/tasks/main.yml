@@ -33,25 +33,3 @@
       location = "docker.io"
       insecure = false
     mode: '0644'
-
-- name: "[Podman] Creazione rete {{ container_network_name }}"
-  containers.podman.podman_network:
-    name: "{{ container_network_name }}"
-    state: present
-    subnet: "{{ container_network_subnet }}"
-    gateway: "{{ container_network_gateway }}"
-    driver: bridge
-    dns:
-      - "4.4.4.4"
-      - "8.8.8.8"
-    ipv6: false
-  when: container_runtime == 'podman'
-
-- name: "Verifica rete {{ container_network_name }}"
-  ansible.builtin.command: "{{ container_runtime }} network inspect {{ container_network_name }}"
-  register: network_inspect
-  changed_when: false
-
-- name: "Mostra dettagli rete"
-  ansible.builtin.debug:
-    msg: "Rete '{{ container_network_name }}' configurata correttamente"
