@@ -12,5 +12,5 @@ for i in {1..100}; do
     rand_cpu=$((RANDOM % 90 + 10)) 
     # Scrive nel file 
     echo "$rand_server $rand_cpu" >> "$FILE_OUTPUT" 
-done 
+done > "$FILE_OUTPUT" 
 echo "File '$FILE_OUTPUT' generato con successo!" 
