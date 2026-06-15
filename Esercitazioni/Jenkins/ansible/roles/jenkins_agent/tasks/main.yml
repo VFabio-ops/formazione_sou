@@ -23,8 +23,8 @@
     network: "{{ container_network_name}}"
     ip: "{{ jenkins_agent_ip}}"
     volumes:
-      - /usr/bin/podman:/usr/bin/podman          # monta il binario
-      - /run/user/1000/podman:/run/podman        # monta il socket rootless 
+      - "/usr/bin/podman:/usr/bin/podman"          # monta il binario
+      - "{{ jenkins_agent_data_dir }}:/run/podman"        # monta il socket rootless 
       - "{{ jenkins_agent_data_dir }}:/home/jenkins/agent:Z"
     env:
       JENKINS_URL: "http://{{ jenkins_master_ip }}:8080"
