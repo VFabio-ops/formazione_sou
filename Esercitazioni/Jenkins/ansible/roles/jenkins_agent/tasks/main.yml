@@ -23,6 +23,7 @@
     network: "{{ container_network_name}}"
     ip: "{{ jenkins_agent_ip}}"
     volumes:
+      - "/usr/lib64/libsubid.so.3:/usr/lib64/libsubid.so.3"
       - "/usr/bin/podman:/usr/bin/podman"          # monta il binario
       - "{{ jenkins_agent_data_dir }}:/run/podman"        # monta il socket rootless 
       - "{{ jenkins_agent_data_dir }}:/home/jenkins/agent:Z"
