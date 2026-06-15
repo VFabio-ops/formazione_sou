@@ -20,12 +20,15 @@
     image: "{{ jenkins_agent_image }}"
     state: started
     restart_policy: always
-    network: "{{ container_network_name}}"
-    ip: "{{ jenkins_agent_ip}}"
+    network: "{{ container_network_name }}"
+    ip: "{{ jenkins_agent_ip }}"
     volumes:
-      - "/usr/lib64/libsubid.so.3:/usr/lib64/libsubid.so.3"
-      - "/usr/bin/podman:/usr/bin/podman"          # monta il binario
-      - "{{ jenkins_agent_data_dir }}:/run/podman"        # monta il socket rootless 
+      # libreria e binario dall'host
+      - "/usr/lib64/libsubid.so.3:/usr/lib64/libsubid.so.3:ro"
+      - "/usr/bin/podman:/usr/bin/podman:ro"
+      # socket Podman dell'host (percorso corretto per rootless)
+      - "/run/podman/podman.sock:/run/podman/podman.sock:ro"
+      # workspace dell'agent (qui era il duplicato — una sola destinazione)
       - "{{ jenkins_agent_data_dir }}:/home/jenkins/agent:Z"
     env:
       JENKINS_URL: "http://{{ jenkins_master_ip }}:8080"
