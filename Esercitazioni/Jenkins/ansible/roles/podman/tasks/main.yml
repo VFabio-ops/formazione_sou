@@ -1,4 +1,9 @@
 ---
+- name: Install EPEL repository
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+
 - name: Installazione podman
   ansible.builtin.dnf: 
     name: 
@@ -12,12 +17,6 @@
       - python3-podman
       - python3-requests
     state: latest
-
-- name: Install EPEL repository
-  ansible.builtin.dnf:
-    name: epel-release
-    state: present
- 
 
 - name: Abilitazione del socket Podman (per API REST)
   ansible.builtin.systemd:
