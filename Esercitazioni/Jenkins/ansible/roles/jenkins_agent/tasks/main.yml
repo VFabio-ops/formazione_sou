@@ -51,7 +51,7 @@
   until: >
     agent_status.json is defined and
     not agent_status.json.offline
-  retries: 20
+  retries: 10
   delay: 10
 
 - name: "Agent connesso al Master con successo"

@@ -11,7 +11,7 @@
       - python3-pip
       - python3-podman
       - python3-requests
-    state: latest
+    state: present
 
 - name: Abilitazione del socket Podman (per API REST)
   ansible.builtin.systemd:
