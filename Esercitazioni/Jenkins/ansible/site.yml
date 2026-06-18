@@ -10,6 +10,11 @@
         update_cache: true
       changed_when: false
 
+    - name: Install EPEL repository
+      ansible.builtin.dnf:
+        name: epel-release
+        state: present
+
     - name: "Installazione pacchetti di base"
       ansible.builtin.dnf:
         name:

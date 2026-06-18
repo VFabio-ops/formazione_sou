@@ -21,7 +21,7 @@ jenkins_agent_image: docker.io/jenkins/inbound-agent:latest
 jenkins_agent_data_dir: /opt/jenkins/agent
 
 jenkins_agent_name: "podman-agent"
-jenkins_agent_secret: "2706a85063923bc0f8191cc8fc95218cad8953d3299b6c7ff86fd8b9e7e9829c"
+jenkins_agent_secret: "5f1793b0a875666be24e30fbb91dff6b4ec685bfaf71fea300c92317d5f204af"
 
 jenkins_admin_user: "Admin"
 jenkins_admin_password: "Admin1234!"
