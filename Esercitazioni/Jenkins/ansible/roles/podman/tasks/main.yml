@@ -4,7 +4,6 @@
     name: 
       - podman
       - shadow-utils-subid
-      - podman-compose
       - buildah
       - skopeo
       - python3

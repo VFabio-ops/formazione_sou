@@ -13,7 +13,7 @@
     - name: Install EPEL repository
       ansible.builtin.dnf:
         name: epel-release
-        state: present
+        state: absent
 
     - name: "Installazione pacchetti di base"
       ansible.builtin.dnf:

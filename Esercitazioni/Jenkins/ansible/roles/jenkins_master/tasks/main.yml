@@ -57,7 +57,20 @@
       if (!instance.installState.isSetupComplete()) {
         instance.installState = InstallState.INITIAL_SETUP_COMPLETED
       }
-
+- name: Permessi Podman
+  file:
+    path: /usr/bin/podman
+    owner: 1000
+    group: 1000
+    mode: '0777'
+  
+- name: Permessi Socket
+  file:
+    path: /run/podman/podman.sock
+    owner: 1000
+    group: 1000
+    mode: '0777'
+    
 - name: "Podman avvio container Jenkins Master"
   containers.podman.podman_container:
     name: "{{ jenkins_master_container_name }}"
@@ -71,6 +84,8 @@
       - "{{ jenkins_master_agent_port }}:50000"
     volumes:
       - "{{ jenkins_master_data_dir }}:/var/jenkins_home:Z"
+      - /usr/bin/podman:/usr/bin/podman
+      - /run/podman/podman.sock:/run/podman/podman.sock
     env:
       JAVA_OPTS: "-Xmx2g"
   when: container_runtime == 'podman'
