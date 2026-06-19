@@ -3,14 +3,11 @@ FROM docker.io/jenkins/inbound-agent:rhel-ubi9-jdk25
 USER root
 
 RUN update-ca-trust && \
-    dnf install -y --nodocs --setopt install_weak_deps=false fuse-overlayfs slirp4netns podman shadow-utils jq && \
+    dnf install -y --nodocs --setopt install_weak_deps=false slirp4netns podman shadow-utils jq && \
     dnf clean all && \
     rm -rf /var/cache/dnf && \
-    echo "jenkins:100000:65536" > /etc/subuid && \
-    echo "jenkins:100000:65536" > /etc/subgid && \
     echo "[engine]" > /etc/containers/containers.conf && \
     echo "cgroup_manager = 'cgroupfs'" >> /etc/containers/containers.conf && \
     echo "events_logger = 'file'" >> /etc/containers/containers.conf 
 
 VOLUME ["/home/jenkins/agent"]
-USER jenkins
