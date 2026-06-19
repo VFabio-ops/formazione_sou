@@ -23,6 +23,8 @@
     network: "{{ container_network_name }}"
     privileged: true
     ip: "{{ jenkins_agent_ip }}"
+    ports: 
+      - 8000:8000
     volumes:
       # workspace dell'agent 
       - "{{ jenkins_agent_data_dir }}:/home/jenkins/agent:z"
