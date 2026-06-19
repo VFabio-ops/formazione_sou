@@ -83,7 +83,7 @@
       - "{{ jenkins_master_http_port }}:8080"
       - "{{ jenkins_master_agent_port }}:50000"
     volumes:
-      - "{{ jenkins_master_data_dir }}:/var/jenkins_home:Z"
+      - "{{ jenkins_master_data_dir }}:/var/jenkins_home:z"
       - /usr/bin/podman:/usr/bin/podman
       - /run/podman/podman.sock:/run/podman/podman.sock
     env:
