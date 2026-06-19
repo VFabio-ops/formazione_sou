@@ -17,11 +17,11 @@ jenkins_master_agent_port: 50000
 jenkins_master_data_dir: /opt/jenkins/master
 
 jenkins_agent_container_name: jenkins-agent
-jenkins_agent_image: localhost/jenkins-agent-podman:test
+jenkins_agent_image: docker.io/fabioviscusi/hello-world:latest
 jenkins_agent_data_dir: /opt/jenkins/agent
 
 jenkins_agent_name: "podman-agent"
-jenkins_agent_secret: ""
+jenkins_agent_secret: "69d99ffa68541e0a1a23f6e096c2fa1df9b2a2b05862ca7456f06ce45c11e242"
 
 jenkins_admin_user: "Admin"
 jenkins_admin_password: "Admin1234!"
