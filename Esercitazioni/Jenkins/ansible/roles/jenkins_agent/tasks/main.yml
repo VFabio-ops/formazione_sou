@@ -21,12 +21,8 @@
     state: started
     restart_policy: always
     network: "{{ container_network_name }}"
+    privileged: true
     ip: "{{ jenkins_agent_ip }}"
-    device:
-      - /dev/fuse
-      - /dev/net/tun
-    security_opt:
-      - seccomp=unconfined
     volumes:
       # workspace dell'agent 
       - "{{ jenkins_agent_data_dir }}:/home/jenkins/agent:z"
