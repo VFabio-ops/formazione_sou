@@ -17,7 +17,7 @@ jenkins_master_agent_port: 50000
 jenkins_master_data_dir: /opt/jenkins/master
 
 jenkins_agent_container_name: jenkins-agent
-jenkins_agent_image: docker.io/fabioviscusi/jenkins-agent:latest
+jenkins_agent_image: docker.io/fabioviscusi/jenkins-agent:helm
 jenkins_agent_data_dir: /opt/jenkins/agent
 
 jenkins_agent_name: "podman-agent"
