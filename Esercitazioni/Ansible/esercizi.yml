@@ -1,86 +1,55 @@
 - hosts: all
   become: true
-  become_user: 
   gather_facts: true
   connection: ssh
-  vars:
-    ansible_python_interpreter: /usr/bin/python3.9
+  vars_files:
+    - value.yml
+  vars: 
+    users:
+      - name: "{{ user_name }}"
+        shell: "/bin/bash"
+        group: sudo
+        home: "/home/{{ user_name }}"
+        password: "{{ user_pass | password_hash('sha512') }}"
+      - name: Pluto
+        shell: "/bin/sh"
+        group: sudo
+        home: "/home/Pluto"
+        password: "{{ user_pass | password_hash('sha512') }}"
   tasks:
-    - name: Install EPEL repository
-      ansible.builtin.dnf:
-        name: epel-release
-        state: present
-    - name: Disinstall podman and apache
-      ansible.builtin.dnf:
-        name:
-          - podman
-          - httpd
-        state: absent
-    - name: Update index
-      ansible.builtin.dnf:
-        name: "*"
-        state: latest
-    - name: Install Nginx
-      ansible.builtin.dnf:
-        name: nginx
-        state: present
-    - name : Start Nginx
-      service:
-        name: nginx
-        state: started
-    - name: Install php
-      ansible.builtin.dnf:
-        name: php
-        state: latest
-    - name: Restart Nginx
-      service:
-        name: nginx
-        state: restarted
+    - name: Check for Variables
+      ansible.builtin.debug:
+        msg: "{{ user_name }} {{user_pass | password_hash('sha512') }}" 
+
     - name: Install tool
-      ansible.builtin.dnf:
-        name:
-          - curl
-          - wget
-          - python3.9
-          - python3-pip
-          - htop
-        state: latest
-    - name: Add Docker Repository
-      ansible.builtin.command:
-        cmd: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-    - name: Install Docker Packages
-      ansible.builtin.dnf:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-        state: present
-    - name: Start and enable Docker
-      service:
-        name: docker
-        state: started
-        enabled: yes
-    - name: Install Docker Python Libraries
-      ansible.builtin.pip:
-        name:
-          - requests
-          - docker
-        executable: pip3.9  
-    - name: Create a Docker network
-      community.docker.docker_network:
-        name: my_network
-        ipam_config:
-          - subnet: 172.20.37.0/24
-            gateway: 172.20.37.1
-            iprange: 172.20.37.0/26
-            aux_addresses:
-              host1: 172.20.37.2
-    - name: Create a Docker Container with static IP
-      community.docker.docker_container:
-        name: my_container
-        image: nginx:latest
-        state: started
-        networks:
-          - name: my_network
-            ipv4_address: 172.20.37.3
+      ansible.builtin.apt:
+        update_cache: true
+        name: "{{ item.key }}"
+        state: "{{ item.value }}"
+      loop: "{{ packages | dict2items }}"
+      vars:
+        packages:
+          curl: present
+          wget: present
+          python3: latest
+          htop: present
+
+    - name: Creazione utente Pippo
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        shell: "{{ item.shell }}"
+        group: "{{ item.group }}"
+        home: "{{ item.home }}"
+        password: "{{ item.password }}"
+      loop: "{{ users }}"
+
+    - name: Limite file aperti in Produzione e Sviluppo
+      ansible.builtin.blockinfile:
+        path: /etc/security/limits.conf
+        block: "{{ lookup('template', 'template/limits.j2') }}"
         
+    - name: Whitelist utenti in access.conf
+      ansible.builtin.blockinfile:
+        path: /etc/security/access.conf
+        block: "{{ lookup('template', 'template/whitelist.j2') }}"
+        insertbefore: "^- : ALL : ALL$"
