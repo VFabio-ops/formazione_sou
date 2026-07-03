@@ -287,11 +287,11 @@ access.conf (prima)              access.conf (dopo)
     - name: Limite file aperti
       ansible.builtin.blockinfile:
         path: /etc/security/limits.conf
-        block: "{{ lookup('template', 'limits.j2') }}"
+        block: "{{ lookup('template', 'template/limits.j2') }}"
 
     - name: Whitelist utenti in access.conf
       ansible.builtin.blockinfile:
         path: /etc/security/access.conf
-        block: "{{ lookup('template', 'whitelist.j2') }}"
+        block: "{{ lookup('template', 'template/whitelist.j2') }}"
         insertbefore: "^- : ALL : ALL$"
 ```
