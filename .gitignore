@@ -8,3 +8,6 @@
 /Esercitazioni/KernelTrue/.vagrant
 /Esercitazioni/ODD-EVEN/.vagrant
 /Esercitazioni/KubeCTL/.vagrant
+/Esercitazioni/KubeCTL/ca.crt
+/Esercitazioni/KubeCTL/sa.kubeconfig
+/Esercitazioni/KubeCTL/admin.kubeconfig
