@@ -35,4 +35,4 @@ Repository creata nell'ambito del percorso formativo sourcesense.
 
 ---
 
-*Ultimo aggiornamento: Giugno 2026*
+*Ultimo aggiornamento: Luglio 2026*
