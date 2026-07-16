@@ -1,0 +1,32 @@
+--- 
+- name: "Check fingerprint"
+  hosts: db 
+  become: true
+  gather_facts: false 
+  tasks: 
+    - name: "Calcolo checksum table customers e orders"
+      community.mysql.mysql_query:
+        login_unix_socket: /run/mysqld/mysqld.sock
+        login_db: "{{ app_db_name }}"
+        query: "CHECKSUM TABLE customers, orders"
+      register: checksum_result
+    
+    - name: "Salva i checksum"
+      ansible.builtin.set_fact: 
+        node_checksums: "{{ checksum_result.query_result[0] }}"
+    
+    - name: "Mostra checksum"
+      ansible.builtin.debug:
+        var: node_checksums
+
+- name: "Confronto source e target"
+  hosts: localhost 
+  gather_facts: false
+  become: false 
+  tasks:
+    - name: "Verifica checksum" 
+      ansible.builtin.assert:
+        that:
+          - hostvars['m1'].node_checksums == hostvars['m2'].node_checksums
+        success_msg: "Finger's the same!"
+        fail_msg: "That ain't the same finger, be careful!"  

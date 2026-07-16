@@ -1,0 +1,33 @@
+---
+- name: "Restore del backup sul target"
+  hosts: target
+  become: true
+  gather_facts: false
+  tasks: 
+    - name: "Check backup su localhost"
+      ansible.builtin.stat:
+        path: "{{ local_backup_dir }}/{{ backup_file }}"
+      delegate_to: localhost 
+      become: false 
+      register: local_dump
+    
+    - name: "Assicura la directory di restore"
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        state: directory
+        owner: root 
+        group: root
+        mode: "0750"
+
+    - name: "Copia del backup"
+      ansible.builtin.copy:
+        src: "{{ local_backup_dir }}/{{ backup_file }}"
+        dest: "{{ backup_dir }}/{{ backup_file }}"
+        owner: root 
+        group: root 
+        mode: "640"
+      
+    - name: "Restore del backup"
+      ansible.builtin.shell:
+        cmd: "mariadb < {{ backup_dir }}/{{ backup_file }}"
+      changed_when: true

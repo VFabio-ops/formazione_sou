@@ -1,0 +1,18 @@
+---
+- name:
+  hosts: db
+  become: true
+  tasks:
+    - name: "Installazione MariaDB"
+      ansible.builtin.apt:
+        name:
+          - mariadb-server
+          - mariadb-client
+        state: present
+        update_cache: true
+    
+    - name: "Check servizio attivato e abilitato"
+      ansible.builtin.service:
+        name: mariadb
+        state: started
+        enabled: true 

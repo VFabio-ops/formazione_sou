@@ -1,0 +1,38 @@
+--- 
+- name: "Backup DB"
+  hosts: source
+  become: true
+  gather_facts: false
+  tasks:
+    - name: "Gestione privilegi directory di backup"
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        state: directory 
+        owner: root 
+        group: root 
+        mode: "0750"
+
+    - name: "Esecuzione di backup"
+      ansible.builtin.command:
+        cmd: >-
+          mariadb-dump
+          --single-transaction
+          --databases {{ app_db_name }}
+          --result-file={{ backup_dir }}/{{ backup_file }}
+      changed_when: true
+
+    - name: "Calcola l'hash del backup"
+      ansible.builtin.stat:
+        path: "{{ backup_dir }}/{{ backup_file }}"
+        checksum_algorithm: sha256
+      register: dump_stat
+
+    - name: "Mostra dimensione e hash del backup"
+      ansible.builtin.debug:
+        msg: "Backup {{ backup_file }}: {{ (dump_stat.stat.size / 1024) | round(1) }} KiB - sha256={{ dump_stat.stat.checksum }}"
+
+    - name: "Scarica il backup sul control node"
+      ansible.builtin.fetch:
+        src: "{{ backup_dir }}/{{ backup_file }}"
+        dest: "{{ local_backup_dir }}/"
+        flat: true

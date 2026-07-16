@@ -1,0 +1,7 @@
+---
+- import_playbook: mariadb.yml
+- import_playbook: database.yml
+- import_playbook: seed.yml
+- import_playbook: backup.yml
+- import_playbook: restore.yml
+- import_playbook: verify.yml
