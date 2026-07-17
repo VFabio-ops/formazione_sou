@@ -4,10 +4,13 @@
   become: true
   gather_facts: false
   tasks:
-
-    - name: "FIRMA - sto eseguendo la versione nuova"
-      ansible.builtin.debug:
-        msg: "VERSIONE NUOVA CON CHOWN - {{ ansible_date_time.iso8601 | default('x') }}"
+    - name: "Gestione privilegi directory di backup"
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        state: directory 
+        owner: root 
+        group: root 
+        mode: "0755"
 
     - name: "Esecuzione di backup"
       ansible.builtin.command:
@@ -24,6 +27,7 @@
         owner: vagrant 
         group: vagrant 
         mode: "0640"
+
 
     - name: "Assicura la directory di backup su source"
       ansible.builtin.file:
