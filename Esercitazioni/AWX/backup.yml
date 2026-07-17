@@ -29,7 +29,7 @@
         mode: "0640"
 
 
-    - name: "Assicura la directory di backup su source"
+    - name: "Assicura la directory di backup su target"
       ansible.builtin.file:
         path: "{{ backup_dir }}"
         state: directory
