@@ -7,7 +7,7 @@
 
     - name: "Check backup su target"
       ansible.builtin.stat:
-        path: "tmp/{{ backup_file }}" 
+        path: "/tmp/{{ backup_file }}" 
       register: dump_on_target
 
     - name: Interrompi se il dump non c'e'

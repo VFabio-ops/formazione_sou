@@ -11,6 +11,6 @@
 /Esercitazioni/KubeCTL/ca.crt
 /Esercitazioni/KubeCTL/sa.kubeconfig
 /Esercitazioni/KubeCTL/admin.kubeconfig
-/Esercitazioni/Backup/.vagrant
-/Esercitazioni/Backup/playbook/.vagrant
+/Esercitazioni/AWX/Backup/.vagrant
+/Esercitazioni/AWX/Backup/playbook/.vagrant
 /Esercitazioni/AWX/.vagrant
