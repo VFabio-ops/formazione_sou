@@ -28,7 +28,7 @@
         owner: root 
         group: root
         mode: "0750"
-      delegato_to: "{{ target_host }}"
+      delegate_to: "{{ target_host }}"
     
     - name: "Copia del backup su target" 
       ansible.builtin.commad:
