@@ -21,13 +21,21 @@
           --result-file={{ backup_dir }}/{{ backup_file }}
       changed_when: true
 
-    - name: "Assicura la directory di backup sul target"
+    - name: "Rendere accessibile il backup a Vagrant"
+      ansible.builtin.file:
+        path: "{{ backup_dir }}/{{ backup_file }}"
+        owner: vagrant 
+        group: vagrant 
+        mode: "0640"
+
+
+    - name: "Assicura la directory di backup su source"
       ansible.builtin.file:
         path: "{{ backup_dir }}"
         state: directory
         owner: root 
         group: root
-        mode: "0750"
+        mode: "0755"
       delegate_to: "{{ target_host }}"
     
     - name: "Copia del backup su target" 
