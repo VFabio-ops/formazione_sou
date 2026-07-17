@@ -1,0 +1,21 @@
+---
+- name: "Restore del backup sul target"
+  hosts: target
+  become: true
+  gather_facts: false
+  tasks:
+
+    - name: "Check backup su target"
+      ansible.builtin.stat:
+        path: "tmp/{{ backup_file }}" 
+      register: dump_in_target
+
+    - name: Interrompi se il dump non c'e'
+      ansible.builtin.assert:
+        that: dump_on_target.stat.exists
+        fail_msg: "Dump non trovato in /tmp/{{ backup_file }} sul target — esegui prima il backup"
+
+    - name: "Restore del backup"
+      ansible.builtin.shell:
+        cmd: "mariadb < /tmp/{{ backup_file }}"
+      changed_when: true

@@ -13,6 +13,7 @@ INSERT INTO customers (full_name, email, city) VALUES ('Luigi Bianchi',  'luigi.
 INSERT INTO customers (full_name, email, city) VALUES ('Anna Verdi',     'anna.verdi@example.test',     'Roma');
 INSERT INTO customers (full_name, email, city) VALUES ('Sara Neri',      'sara.neri@example.test',      'Torino');
 INSERT INTO customers (full_name, email, city) VALUES ('Paolo Gialli',   'paolo.gialli@example.test',   'Napoli');
+INSERT INTO customers (full_name, email, city) VALUES ('CANARINO TEST', 'canarino@example.test', 'Bologna');
 
 CREATE TABLE orders (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
