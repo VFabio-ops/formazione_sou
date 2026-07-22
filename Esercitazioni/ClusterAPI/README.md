@@ -137,7 +137,7 @@ La release risulta `deployed` alla revision 1.
 ### 7. Accedere all'applicazione
 
 L'applicazione viene raggiunta in locale tramite un port-forward contro il
-workload cluster (adattare nome del service e porte a quelli del chart):
+workload cluster:
 
 ```bash
 kubectl --kubeconfig=./capi-quickstart.kubeconfig \
