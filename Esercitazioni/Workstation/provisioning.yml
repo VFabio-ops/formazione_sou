@@ -1,7 +1,77 @@
----
 - hosts: all
   become: true
+  become_user: root
   tasks:
-  - name: Install Apache
-    apt:
-      name: apache2
+
+    - name: Install EPEL repository
+      ansible.builtin.dnf:
+        name: epel-release
+        state: present
+    
+    - name: Update all packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+    
+    - name: Add Docker Repository
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/rhel/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
+        mode: '0644'
+
+    - name: Install Docker
+      ansible.builtin.dnf:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+        state: present
+
+    - name: Start and enable Docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Installing Packages
+      ansible.builtin.dnf:
+        name:
+          - vim 
+          - htop
+          - curl
+          - net-tools
+          - python3-pip
+          - wget
+          - tar
+        state: latest
+
+    - name: Install Docker Python Libraries
+      ansible.builtin.pip:
+        name:
+          - requests
+          - docker
+        executable: pip3.9 
+         
+    - name: Create a Docker network
+      community.docker.docker_network:
+        name: my_network
+        ipam_config:
+          - subnet: 172.20.37.0/24
+            gateway: 172.20.37.1
+            iprange: 172.20.37.0/26
+            aux_addresses:
+              host1: 172.20.37.2
+
+    - name: Install Jenkins Container
+      community.docker.docker_container:
+        name: jenkins
+        image: jenkins/jenkins:latest
+        state: started
+        networks:
+          - name: my_network
+            ipv4_address: 172.20.37.3
+        ports:
+          - "8080:8080"
+          - "50000:50000"
+        

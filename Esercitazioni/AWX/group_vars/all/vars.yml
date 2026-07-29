@@ -1,0 +1,7 @@
+---
+app_db_name: shopdb
+app_db_user: shopuser
+app_db_password: "{{ vault_app_db_password }}"
+backup_dir: /var/backups/mariadb
+backup_file: "{{ app_db_name }}.sql"
+target_host: 192.168.100.2

@@ -1,0 +1,55 @@
+- hosts: all
+  become: true
+  gather_facts: true
+  connection: ssh
+  vars_files:
+    - value.yml
+  vars: 
+    users:
+      - name: "{{ user_name }}"
+        shell: "/bin/bash"
+        group: sudo
+        home: "/home/{{ user_name }}"
+        password: "{{ user_pass | password_hash('sha512') }}"
+      - name: Pluto
+        shell: "/bin/sh"
+        group: sudo
+        home: "/home/Pluto"
+        password: "{{ user_pass | password_hash('sha512') }}"
+  tasks:
+    - name: Check for Variables
+      ansible.builtin.debug:
+        msg: "{{ user_name }} {{user_pass | password_hash('sha512') }}" 
+
+    - name: Install tool
+      ansible.builtin.apt:
+        update_cache: true
+        name: "{{ item.key }}"
+        state: "{{ item.value }}"
+      loop: "{{ packages | dict2items }}"
+      vars:
+        packages:
+          curl: present
+          wget: present
+          python3: latest
+          htop: present
+
+    - name: Creazione utente Pippo
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        shell: "{{ item.shell }}"
+        group: "{{ item.group }}"
+        home: "{{ item.home }}"
+        password: "{{ item.password }}"
+      loop: "{{ users }}"
+
+    - name: Limite file aperti in Produzione e Sviluppo
+      ansible.builtin.blockinfile:
+        path: /etc/security/limits.conf
+        block: "{{ lookup('template', 'template/limits.j2') }}"
+        
+    - name: Whitelist utenti in access.conf
+      ansible.builtin.blockinfile:
+        path: /etc/security/access.conf
+        block: "{{ lookup('template', 'template/whitelist.j2') }}"
+        insertbefore: "^- : ALL : ALL$"

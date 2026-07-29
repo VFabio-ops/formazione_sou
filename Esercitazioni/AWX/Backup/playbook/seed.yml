@@ -1,0 +1,23 @@
+---
+- name: "Popolare il database"
+  hosts: source
+  become: true
+  gather_facts: false
+  tasks: 
+    - name: "Copia lo script SQL"
+      ansible.builtin.copy: 
+        src: files/seed.sql
+        dest: /tmp/seed.sql
+        mode: "0644"
+
+    - name: "Popola il DB"
+      community.mysql.mysql_db: 
+        name: "{{ app_db_name }}"
+        state: import
+        target: /tmp/seed.sql
+        login_unix_socket: /run/mysqld/mysqld.sock 
+      
+    - name: "Rimozione script"
+      ansible.builtin.file:
+        path: /tmp/seed.sql 
+        state: absent

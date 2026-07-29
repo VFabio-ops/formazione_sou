@@ -1,0 +1,48 @@
+--- 
+- name: "Backup DB"
+  hosts: source
+  become: true
+  gather_facts: false
+  tasks:
+    - name: "Gestione privilegi directory di backup"
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        state: directory 
+        owner: root 
+        group: root 
+        mode: "0755"
+
+    - name: "Esecuzione di backup"
+      ansible.builtin.command:
+        cmd: >-
+          mariadb-dump
+          --single-transaction
+          --databases {{ app_db_name }}
+          --result-file={{ backup_dir }}/{{ backup_file }}
+      changed_when: true
+
+    - name: "Rendere accessibile il backup a Vagrant"
+      ansible.builtin.file:
+        path: "{{ backup_dir }}/{{ backup_file }}"
+        owner: vagrant 
+        group: vagrant 
+        mode: "0640"
+
+
+    - name: "Assicura la directory di backup su target"
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        state: directory
+        owner: root 
+        group: root
+        mode: "0755"
+      delegate_to: "{{ target_host }}"
+    
+    - name: "Copia del backup su target" 
+      ansible.builtin.command:
+        cmd: >-
+          scp -o StrictHostKeyChecking=accept-new
+          {{ backup_dir }}/{{ backup_file }}
+          vagrant@{{ target_host }}:/tmp/{{ backup_file }}
+      changed_when: true
+      become: false

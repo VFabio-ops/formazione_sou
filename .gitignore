@@ -1,2 +1,16 @@
-/Esercizi/Workstation/.vagrant
 .git
+/Esercitazioni/Workstation/.vagrant
+/Esercitazioni/Ansible/.vagrant
+/Esercitazioni/Ansible/inventory.ini
+/Esercitazioni/capraCavolo/.vagrant
+/Esercitazioni/Jenkins/.vagrant
+/Esercitazioni/VagrantPingPong/.vagrant
+/Esercitazioni/KernelTrue/.vagrant
+/Esercitazioni/ODD-EVEN/.vagrant
+/Esercitazioni/KubeCTL/.vagrant
+/Esercitazioni/KubeCTL/ca.crt
+/Esercitazioni/KubeCTL/sa.kubeconfig
+/Esercitazioni/KubeCTL/admin.kubeconfig
+/Esercitazioni/AWX/Backup/.vagrant
+/Esercitazioni/AWX/Backup/playbook/.vagrant
+/Esercitazioni/AWX/.vagrant

@@ -1,0 +1,26 @@
+--- 
+- name: "Installazione driver Python, db e user"
+  hosts: db 
+  become: true
+  gather_facts: false
+  tasks:
+    - name: "Installa driver Python"
+      ansible.builtin.apt: 
+        name: python3-pymysql
+        state: present 
+
+    - name: "Assicura il database"
+      community.mysql.mysql_db:
+        name: "{{ app_db_name }}"
+        state: present 
+        login_unix_socket: /run/mysqld/mysqld.sock
+      
+    - name: "Assicura l'utente con privilegi su shopdb"
+      community.mysql.mysql_user:
+        name: "{{ app_db_user }}"
+        password: "{{ app_db_password }}"
+        host: localhost
+        priv: "{{ app_db_name }}.*:ALL"
+        state: present 
+        login_unix_socket: /run/mysqld/mysqld.sock 
+      no_log: true
