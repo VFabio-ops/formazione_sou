@@ -1,0 +1,36 @@
+Vagrant.configure("2") do |config|
+ config.vm.box = "bento/ubuntu-24.04"
+ config.disksize.size = "40GB"
+ config.vm.provider "virtualbox" do |vb|
+   cinder_disk = File.join(File.dirname(__FILE__), "cinder.vdi")
+   unless File.exist?(cinder_disk)
+     vb.customize ["createmedium", "disk", "--filename", cinder_disk, "--size", 30720]
+   end
+   vb.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", cinder_disk]
+   vb.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
+   vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
+   vb.memory = "12288"
+   vb.cpus = 4
+end
+
+# Other Options
+
+ config.vm.define "m1" do |m1|
+  m1.vm.hostname = "m1"
+  m1.vm.network "private_network", ip: "192.168.56.10"
+  m1.vm.network "private_network", type: "dhcp", auto_config: false
+ end
+ config.vm.provision "shell", inline: <<-SHELL
+  cat > /etc/netplan/99-dns.yaml <<EOF
+network:
+  version: 2
+  ethernets:
+    eth0:
+      nameservers:
+        addresses: [8.8.8.8, 1.1.1.1]
+EOF
+  chmod 600 /etc/netplan/99-dns.yaml
+  netplan apply
+  ip link set eth2 up
+SHELL
+end
